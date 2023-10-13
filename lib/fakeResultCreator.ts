@@ -11,11 +11,8 @@ const cache = {
   lastUnitName: faker.name.fullName(),
 };
 
-const creators = {
+let creators = {
   ...faker,
-  scheduleToken: () => {
-    return faker.random.numeric(6) + "";
-  },
   hour: () => {
     return (
       Math.round(Math.random() * 9 + 9) +
@@ -24,9 +21,6 @@ const creators = {
       "" +
       Math.round(Math.random() * 9)
     );
-  },
-  dateFuture: () => {
-    return (faker.date.future(10) + "").split("T")[0];
   },
   uuid,
   rand_int: () => {
@@ -38,40 +32,13 @@ const creators = {
   alias: () => {
     return slugify(cache.lastCompanyName).toLocaleLowerCase();
   },
-  unit_alias: () => {
-    return slugify(cache.lastUnitName).toLocaleLowerCase();
-  },
-  unit_name: () => {
-    cache.lastUnitName = faker.address.streetName();
-    return cache.lastUnitName;
-  },
-  cpf: () => {
-    let cpf = "";
-    for (let i = 0; i < 9; i++) {
-      cpf += Math.floor(Math.random() * 10);
-    }
-    let soma = 0;
-    for (let i = 0; i < 9; i++) {
-      soma += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-    let resto = 11 - (soma % 11);
-    let digito1 = resto == 10 || resto == 11 ? 0 : resto;
-    cpf += digito1;
-    soma = 0;
-    for (let i = 0; i < 10; i++) {
-      soma += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-    resto = 11 - (soma % 11);
-    let digito2 = resto == 10 || resto == 11 ? 0 : resto;
-    cpf += digito2;
-    return cpf;
-  },
 };
 export function fakeResultCreator(
   req: Request,
   res: Response,
-  next: NextFunction
+  customHandler: { [name: string]: Function } = {}
 ) {
+  creators = { ...creators, ...customHandler };
   const unixPath = "./jsons" + req.originalUrl.split("?")[0] + "/response.json";
   //TODO: random para casos em que não é listagem
   let pathString = path.join(...unixPath.split("/"));

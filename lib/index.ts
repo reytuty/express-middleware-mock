@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import * as path from "path";
 import * as fs from "node:fs";
 import { fakeResultCreator } from "./fakeResultCreator";
-export default function mockJson(folder: string) {
+export default function mockJson(folder: string, customHandler: any = {}) {
   const mock = (req: Request, res: Response, next: NextFunction) => {
     const basePath = "./" + folder + req.originalUrl.split("?")[0];
     const unixPath = basePath + "/request.json";
@@ -17,7 +17,7 @@ export default function mockJson(folder: string) {
         return res.status(400).send(validateRequestResult);
       }
     }
-    fakeResultCreator(req, res, next);
+    fakeResultCreator(req, res, customHandler);
   };
   return mock;
 }
