@@ -1,0 +1,228 @@
+import { Request, Response, NextFunction } from "express";
+import * as path from "path";
+import * as fs from "node:fs";
+import { Faker, faker } from "@faker-js/faker";
+import { v4 as uuid } from "uuid";
+import slugify from "slugify";
+
+const cache = {
+  lastCompanyName: faker.company.name(),
+  lastFullName: faker.name.fullName(),
+  lastUnitName: faker.name.fullName(),
+};
+
+const creators = {
+  ...faker,
+  scheduleToken: () => {
+    return faker.random.numeric(6) + "";
+  },
+  hour: () => {
+    return (
+      Math.round(Math.random() * 9 + 9) +
+      ":" +
+      Math.round(Math.random() * 9) +
+      "" +
+      Math.round(Math.random() * 9)
+    );
+  },
+  dateFuture: () => {
+    return (faker.date.future(10) + "").split("T")[0];
+  },
+  uuid,
+  rand_int: () => {
+    return Math.round(Math.random() * 59) + 1;
+  },
+  boolean: () => {
+    return Math.round(Math.random() * 1000) % 2 == 0;
+  },
+  alias: () => {
+    return slugify(cache.lastCompanyName).toLocaleLowerCase();
+  },
+  unit_alias: () => {
+    return slugify(cache.lastUnitName).toLocaleLowerCase();
+  },
+  unit_name: () => {
+    cache.lastUnitName = faker.address.streetName();
+    return cache.lastUnitName;
+  },
+  cpf: () => {
+    let cpf = "";
+    for (let i = 0; i < 9; i++) {
+      cpf += Math.floor(Math.random() * 10);
+    }
+    let soma = 0;
+    for (let i = 0; i < 9; i++) {
+      soma += parseInt(cpf.charAt(i)) * (10 - i);
+    }
+    let resto = 11 - (soma % 11);
+    let digito1 = resto == 10 || resto == 11 ? 0 : resto;
+    cpf += digito1;
+    soma = 0;
+    for (let i = 0; i < 10; i++) {
+      soma += parseInt(cpf.charAt(i)) * (11 - i);
+    }
+    resto = 11 - (soma % 11);
+    let digito2 = resto == 10 || resto == 11 ? 0 : resto;
+    cpf += digito2;
+    return cpf;
+  },
+};
+export function fakeResultCreator(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const unixPath = "./jsons" + req.originalUrl.split("?")[0] + "/response.json";
+  //TODO: random para casos em que não é listagem
+  let pathString = path.join(...unixPath.split("/"));
+  if (fs.existsSync(pathString)) {
+    //checking for fake result
+    try {
+      const data = JSON.parse(fs.readFileSync(pathString) + "");
+      if (
+        data?.result?.list &&
+        Array.isArray(data.result.list) &&
+        data.result.list.length == 1
+      ) {
+        //tem apenas 1 item no array, verificar a construção de conteúdo fake baseado nesse primeiro objeto como template
+        //verificando quantidade de itens
+        let skipped = parseInt(req?.query?.skip || data.result?.skipped || 0);
+        let limited = parseInt(req?.query?.limit || data.result?.limited || 30);
+        let total = parseInt(data.result?.total || 40);
+        if (total > 0 && limited > 0 && total > skipped) {
+          //end size
+          let sizeOut = Math.min(total - skipped, limited);
+          let arrResult = [];
+          while (sizeOut-- > 0) {
+            arrResult.push(duplicateRandomItem(data.result.list[0]));
+          }
+          return res.send({
+            success: true,
+            result: {
+              skipped,
+              limited,
+              total,
+              list: arrResult,
+            },
+            fakeResult: true,
+            messages: ["fake result"],
+          });
+        }
+      }
+      if (typeof data?.result == "object") {
+        data.result = duplicateRandomItem(data.result);
+      }
+      if (data?.file) {
+        //o resultado é um arquivo
+        return resolveFile(data.file, res);
+      }
+      data.isRedirected = req.query._is_redirected || false;
+      data.fakeResult = true;
+      return res.send(data);
+    } catch (e) {
+      res.status(500).send({
+        success: false,
+        result: e,
+        messages: ["Erro ao parsear o json em response"],
+      });
+    }
+  }
+  res
+    .status(404)
+    .send({ success: false, isRedirected: req.query._is_redirected || false });
+  //next();
+}
+//faker.name.fullName()
+function duplicateRandomItem(item: any): any {
+  let clone = { ...item };
+  //switch values
+  for (let i in clone) {
+    if (typeof clone[i] == "string") {
+      let fName: string = clone[i] as string;
+      //find a pipe
+      let choices = fName.split("|");
+      if (Array.isArray(choices) && choices.length > 1) {
+        clone[i] = choices[Math.round(Math.random() * choices.length - 1)];
+        continue;
+      }
+      const method: Function | null = findMethod(creators, fName);
+      if (method) {
+        clone[i] = method();
+        if (fName == "company.name") {
+          cache.lastCompanyName = clone[i];
+        }
+        if (fName == "name.fullName") {
+          cache.lastFullName = clone[i];
+        }
+      }
+      continue;
+    }
+    if (Array.isArray(clone[i])) {
+      let arr = clone[i];
+      if (arr.length != 1) {
+        continue;
+      }
+      let fName = clone[i][0];
+      if (typeof fName == "object" && Object.keys(fName).length > 0) {
+        clone[i][0] = duplicateRandomItem(clone[i][0]);
+        continue;
+      }
+      let choices = fName.split("|");
+      if (choices.length > 1) {
+        let total = Math.round(Math.random() * choices.length - 1);
+        clone[i] = uniqueSubset(choices, total);
+        continue;
+      }
+      clone[i] = duplicateRandomItem(clone[i]);
+      continue;
+    }
+    if (typeof clone[i] == "object" && Object.keys(clone[i]).length > 0) {
+      clone[i] = duplicateRandomItem(clone[i]);
+      continue;
+    }
+  }
+  return clone;
+}
+
+function findMethod(ob: any, fName: string): Function | null {
+  if (!ob) {
+    return null;
+  }
+  let props: string[] = fName.split(".");
+  let propValue: any = ob[props[0]];
+  if (!propValue) {
+    return null;
+  }
+  if (props.length > 1) {
+    props.shift();
+    return findMethod(propValue, props.join("."));
+  }
+  if (typeof propValue == "function") {
+    return propValue as Function;
+  }
+  return null;
+}
+function uniqueSubset(choices: any[], total: number): any[] {
+  // Verifica se o número de escolhas é menor ou igual ao valor total
+  if (choices.length <= total) {
+    // Retorna todas as opções
+    return choices;
+  }
+  // Verifica se o número de opções únicas é menor ou igual ao valor total
+  if (choices.length <= total) {
+    // Retorna todas as opções únicas
+    return choices;
+  }
+  // Retorna um subconjunto aleatório das opções únicas com tamanho igual ao valor total
+  const shuffled = choices.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, total);
+}
+function resolveFile(file: string, res: Response) {
+  const fileName = path.basename(file);
+  res.download(file, fileName, (error) => {
+    if (error) {
+      console.error("Erro ao enviar o arquivo:", error);
+      res.status(500).json({ message: "Erro ao fazer o download do arquivo." });
+    }
+  });
+}
