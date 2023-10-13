@@ -1,15 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import * as path from "path";
 import * as fs from "node:fs";
 import { Faker, faker } from "@faker-js/faker";
 import { v4 as uuid } from "uuid";
-import slugify from "slugify";
-
-const cache = {
-  lastCompanyName: faker.company.name(),
-  lastFullName: faker.name.fullName(),
-  lastUnitName: faker.name.fullName(),
-};
 
 let creators = {
   ...faker,
@@ -28,9 +21,6 @@ let creators = {
   },
   boolean: () => {
     return Math.round(Math.random() * 1000) % 2 == 0;
-  },
-  alias: () => {
-    return slugify(cache.lastCompanyName).toLocaleLowerCase();
   },
 };
 export function fakeResultCreator(
@@ -115,12 +105,6 @@ function duplicateRandomItem(item: any): any {
       const method: Function | null = findMethod(creators, fName);
       if (method) {
         clone[i] = method();
-        if (fName == "company.name") {
-          cache.lastCompanyName = clone[i];
-        }
-        if (fName == "name.fullName") {
-          cache.lastFullName = clone[i];
-        }
       }
       continue;
     }
