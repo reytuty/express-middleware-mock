@@ -26,32 +26,27 @@ let creators = {
 export function fakeResultCreator(
   req: Request,
   res: Response,
+  unixPath: string,
   customHandler: { [name: string]: Function } = {}
 ) {
   creators = { ...creators, ...customHandler };
-  const unixPath = "./jsons" + req.originalUrl.split("?")[0] + "/response.json";
-  //TODO: random para casos em que não é listagem
   let pathString = path.join(...unixPath.split("/"));
   if (fs.existsSync(pathString)) {
     //checking for fake result
     try {
-      const data = JSON.parse(fs.readFileSync(pathString) + "");
-      if (
-        data?.result?.list &&
-        Array.isArray(data.result.list) &&
-        data.result.list.length == 1
-      ) {
+      let data = JSON.parse(fs.readFileSync(pathString) + "");
+      if (data?.list && Array.isArray(data.list) && data.list.length == 1) {
         //tem apenas 1 item no array, verificar a construção de conteúdo fake baseado nesse primeiro objeto como template
         //verificando quantidade de itens
-        let skipped = parseInt(req?.query?.skip || data.result?.skipped || 0);
-        let limited = parseInt(req?.query?.limit || data.result?.limited || 30);
-        let total = parseInt(data.result?.total || 40);
+        let skipped = parseInt(req?.query?.skip || data?.skipped || 0);
+        let limited = parseInt(req?.query?.limit || data?.limited || 30);
+        let total = parseInt(data?.total || 40);
         if (total > 0 && limited > 0 && total > skipped) {
           //end size
           let sizeOut = Math.min(total - skipped, limited);
           let arrResult = [];
           while (sizeOut-- > 0) {
-            arrResult.push(duplicateRandomItem(data.result.list[0]));
+            arrResult.push(duplicateRandomItem(data.list[0]));
           }
           return res.send({
             success: true,
@@ -66,8 +61,8 @@ export function fakeResultCreator(
           });
         }
       }
-      if (typeof data?.result == "object") {
-        data.result = duplicateRandomItem(data.result);
+      if (typeof data == "object") {
+        data = duplicateRandomItem(data);
       }
       if (data?.file) {
         //o resultado é um arquivo

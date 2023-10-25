@@ -1,8 +1,12 @@
 {
   "name": "express-middleware-mock",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "author": "Renato Miawaki",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reytuty/express-middleware-mock"
+  },
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",

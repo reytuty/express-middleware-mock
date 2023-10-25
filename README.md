@@ -16,7 +16,7 @@ import cors from "cors"; //optional
 import mockJson from "express-middleware-mock";
 
 const USE_MOCK = process.env.USE_MOCK || false;
-const MOCK_FOLDER = process.env.MOCK_FOLDER || 'jsons';
+const MOCK_FOLDER = process.env.MOCK_FOLDER || './jsons';
 
 const app = express();
 app.use(cors());
@@ -109,21 +109,20 @@ And if you put some values that exists on faker as a method or inside a objectHa
 
 You also can create a response using a list response pattern like this:
 
+| tip: If you use this struture to result list, the fake result layer will simulate a list of result
+
 ```
 {
-  "success": true,
-  "result": {
-    "total": 405,
-    "skiped": 0,
-    "limited": 10,
-    "list": [
-      {
-        "id": "uuid",
-        "name": "name.fullName",
-        "description": "lorem"
-      }
-    ]
-  }
+  "total": 405,
+  "skiped": 0,
+  "limited": 10,
+  "list": [
+    {
+      "id": "uuid",
+      "name": "name.fullName",
+      "description": "lorem"
+    }
+  ]
 }
 ```
 
@@ -156,6 +155,8 @@ if (USE_MOCK) {
   app.use(mockJson(MOCK_FOLDER, myHandler));
 }
 ```
+
+| tip: Use relative path with `./` or absolute path
 
 And now you can use:
 

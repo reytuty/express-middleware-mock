@@ -4,10 +4,11 @@ import * as fs from "node:fs";
 import { fakeResultCreator } from "./fakeResultCreator";
 export default function mockJson(folder: string, customHandler: any = {}) {
   const mock = (req: Request, res: Response, next: NextFunction) => {
-    const basePath = "./" + folder + req.originalUrl.split("?")[0];
-    const unixPath = basePath + "/request.json";
-    let pathString = path.join(...unixPath.split("/"));
+    const basePath = folder + req.originalUrl.split("?")[0];
+    const unixPathRequest = basePath + "/request.json";
+    const unixPathResponse = basePath + "/response.json";
     checkRedirect(req, res, basePath);
+    let pathString = path.join(...unixPathRequest.split("/"));
     if (fs.existsSync(pathString)) {
       const validateRequestResult = validateRequest(
         req,
@@ -17,7 +18,7 @@ export default function mockJson(folder: string, customHandler: any = {}) {
         return res.status(400).send(validateRequestResult);
       }
     }
-    fakeResultCreator(req, res, customHandler);
+    fakeResultCreator(req, res, unixPathResponse, customHandler);
   };
   return mock;
 }
