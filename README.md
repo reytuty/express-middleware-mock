@@ -180,7 +180,7 @@ The result will be:
 
 ```
 .
- /jsons
+ /mock
     /test
       /a
         request.json
@@ -190,6 +190,10 @@ The result will be:
         /example
           request.json
           response.json
+        /example-2
+          request.json
+          response.json
+          errors.json
     /api
       /users
         /list
@@ -200,4 +204,5 @@ We have 3 examples here and all of them inside a 'jsons' folder.
 
 - `test/a` using request/response files
 - `my/router/example` using request/response files BUT using a existed router path
+- `my/router/example-2` using request/response and chance to result error
 - `api/users/list` using redirect.json file

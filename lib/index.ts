@@ -2,13 +2,33 @@ import { NextFunction, Request, Response } from "express";
 import * as path from "path";
 import * as fs from "node:fs";
 import { fakeResultCreator } from "./fakeResultCreator";
+import { error } from "console";
+export interface ErrorChanceInterface {
+  percentChance: number;
+  status: number;
+  body?: string;
+}
 export default function mockJson(folder: string, customHandler: any = {}) {
   const mock = (req: Request, res: Response, next: NextFunction) => {
     const basePath = folder + req.originalUrl.split("?")[0];
     const unixPathRequest = basePath + "/request.json";
     const unixPathResponse = basePath + "/response.json";
+    const unixPathErrors = basePath + "/errors.json";
     checkRedirect(req, res, basePath);
     let pathString = path.join(...unixPathRequest.split("/"));
+    let pathStringErrors = path.join(...unixPathErrors.split("/"));
+    if (fs.existsSync(pathStringErrors)) {
+      const simulatedError = checkSimulatedErrors(
+        JSON.parse(fs.readFileSync(pathStringErrors) + "") as
+          | ErrorChanceInterface
+          | ErrorChanceInterface[]
+      ) as ErrorChanceInterface;
+      if (simulatedError) {
+        return res
+          .status(simulatedError?.status || 500)
+          .send(simulatedError?.body ?? "Simulated error");
+      }
+    }
     if (fs.existsSync(pathString)) {
       const validateRequestResult = validateRequest(
         req,
@@ -36,8 +56,31 @@ const specialValidators: { [key: string]: Function } = {
     return true;
   },
 };
+function checkSimulatedErrors(
+  errorsChances: undefined | ErrorChanceInterface | ErrorChanceInterface[]
+): ErrorChanceInterface | null {
+  if (!errorsChances) {
+    return null;
+  }
+  if (Array.isArray(errorsChances)) {
+    for (const errorChance of errorsChances) {
+      const error = checkSimulatedErrors(errorChance);
+      if (error) {
+        return error as ErrorChanceInterface;
+      }
+    }
+    return null;
+  }
+  if (errorsChances?.percentChance > 0) {
+    const happends: boolean = Math.random() * 100 < errorsChances.percentChance;
+    if (happends) {
+      return errorsChances;
+    }
+  }
+  return null;
+}
 function validateRequest(
-  req: any,
+  req: Request,
   content: any
 ): {
   success: boolean;
@@ -49,12 +92,24 @@ function validateRequest(
     result: { [key: string]: { [key: string]: string } };
     messages: string[];
   } = { success: true, result: {}, messages: [] };
+  const methods: string[] | undefined = content?.headers.methods;
+  if (
+    methods &&
+    Array.isArray(methods) &&
+    methods.indexOf(`${req.method}`.toLocaleLowerCase()) < 0
+  ) {
+    //was defined method but the request is different that
+    result.success = false;
+    result.messages.push(
+      `The method ${req.method} is not listed on ${methods.join(",")}`
+    );
+  }
   for (let propName in content) {
-    if (!req[propName]) {
+    if (!(req as any)[propName]) {
       continue;
     }
     result.result[propName] = {};
-    let requestProp: any = req[propName];
+    let requestProp: any = (req as any)[propName];
     for (let varName in content[propName]) {
       try {
         if (content[propName][varName]) {
