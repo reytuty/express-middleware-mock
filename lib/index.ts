@@ -96,7 +96,7 @@ function validateRequest(
   if (
     methods &&
     Array.isArray(methods) &&
-    methods.indexOf(`${req.method}`.toLocaleLowerCase()) < 0
+    methods.indexOf(`${req.method}`.toUpperCase()) < 0
   ) {
     //was defined method but the request is different that
     result.success = false;

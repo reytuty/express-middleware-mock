@@ -1,0 +1,12 @@
+[
+  {
+    "percentChance": 20,
+    "status": 403,
+    "body": "Deu erro por falta de permissão"
+  },
+  {
+    "percentChance": 15,
+    "status": 401,
+    "body": "Bad request"
+  }
+]
