@@ -92,7 +92,7 @@ function validateRequest(
     result: { [key: string]: { [key: string]: string } };
     messages: string[];
   } = { success: true, result: {}, messages: [] };
-  const methods: string[] | undefined = content?.headers.methods;
+  const methods: string[] | undefined = content?.headers?.methods;
   if (
     methods &&
     Array.isArray(methods) &&
