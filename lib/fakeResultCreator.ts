@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "node:fs";
 import { Faker, faker } from "@faker-js/faker";
 import { v4 as uuid } from "uuid";
-
+faker.name.fullName;
 let creators = {
   ...faker,
   hour: () => {
@@ -89,17 +89,22 @@ function duplicateRandomItem(item: any): any {
   let clone = { ...item };
   //switch values
   for (let i in clone) {
+    if (clone[i] === null) {
+      continue;
+    }
     if (typeof clone[i] == "string") {
       let fName: string = clone[i] as string;
       //find a pipe
       let choices = fName.split("|");
       if (Array.isArray(choices) && choices.length > 1) {
         clone[i] = choices[Math.round(Math.random() * choices.length - 1)];
-        continue;
+        fName = clone[i];
       }
-      const method: Function | null = findMethod(creators, fName);
-      if (method) {
-        clone[i] = method();
+      if (fName) {
+        const method: Function | null = findMethod(creators, fName);
+        if (method) {
+          clone[i] = method();
+        }
       }
       continue;
     }

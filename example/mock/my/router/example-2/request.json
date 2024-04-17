@@ -1,8 +1,10 @@
 {
   "headers": {
     "methods": [
-      "post",
-      "get"
+      "post"
     ]
+  },
+  "body": {
+    "id": true
   }
 }
