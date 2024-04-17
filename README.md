@@ -51,6 +51,9 @@ Request file simbolise what do you need to receive as query params, body or para
 
 ```
 {
+  "params": {
+    "someValueFromQueryParams": true
+  },
   "header":{
     "someHeadersParamsHere": true
   },
@@ -120,7 +123,8 @@ You also can create a response using a list response pattern like this:
     {
       "id": "uuid",
       "name": "name.fullName",
-      "description": "lorem"
+      "description": "lorem",
+      "otherThing": "{query.skip}"
     }
   ]
 }
@@ -194,6 +198,9 @@ The result will be:
           request.json
           response.json
           errors.json
+    /other
+      /[paramName] <- this variable goes to params variable as paramName
+        /test
     /api
       /users
         /list

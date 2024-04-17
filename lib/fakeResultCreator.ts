@@ -29,6 +29,12 @@ export function fakeResultCreator(
   unixPath: string,
   customHandler: { [name: string]: Function } = {}
 ) {
+  const searchObjectList: any = {
+    params: req.params,
+    query: req.query,
+    body: req.body,
+    headers: req.headers,
+  };
   creators = { ...creators, ...customHandler };
   let pathString = path.join(...unixPath.split("/"));
   if (fs.existsSync(pathString)) {
@@ -46,7 +52,7 @@ export function fakeResultCreator(
           let sizeOut = Math.min(total - skipped, limited);
           let arrResult = [];
           while (sizeOut-- > 0) {
-            arrResult.push(duplicateRandomItem(data.list[0]));
+            arrResult.push(duplicateRandomItem(data.list[0], searchObjectList));
           }
           return res.send({
             success: true,
@@ -62,7 +68,7 @@ export function fakeResultCreator(
         }
       }
       if (typeof data == "object") {
-        data = duplicateRandomItem(data);
+        data = duplicateRandomItem(data, searchObjectList);
       }
       if (data?.file) {
         //o resultado é um arquivo
@@ -85,7 +91,7 @@ export function fakeResultCreator(
   //next();
 }
 //faker.name.fullName()
-function duplicateRandomItem(item: any): any {
+function duplicateRandomItem(item: any, searchObjectList: any): any {
   let clone = { ...item };
   //switch values
   for (let i in clone) {
@@ -106,6 +112,16 @@ function duplicateRandomItem(item: any): any {
         const method: Function | null = findMethod(creators, fName);
         if (method) {
           clone[i] = method();
+        } else {
+          //check if fName has a {name} to be replaced
+          let regex = /\{([\.a-zA-Z0-9_-]+)\}/g;
+          const resultRegex = regex.exec(fName);
+          if (resultRegex) {
+            const [contextName, varName] = resultRegex[1].split(".");
+            if (searchObjectList[contextName][varName]) {
+              clone[i] = searchObjectList[contextName][varName];
+            }
+          }
         }
       }
       continue;
@@ -117,7 +133,7 @@ function duplicateRandomItem(item: any): any {
       }
       let fName = clone[i][0];
       if (typeof fName == "object" && Object.keys(fName).length > 0) {
-        clone[i][0] = duplicateRandomItem(clone[i][0]);
+        clone[i][0] = duplicateRandomItem(clone[i][0], searchObjectList);
         continue;
       }
       let choices = fName.split("|");
@@ -126,11 +142,11 @@ function duplicateRandomItem(item: any): any {
         clone[i] = uniqueSubset(choices, total);
         continue;
       }
-      clone[i] = duplicateRandomItem(clone[i]);
+      clone[i] = duplicateRandomItem(clone[i], searchObjectList);
       continue;
     }
     if (typeof clone[i] == "object" && Object.keys(clone[i]).length > 0) {
-      clone[i] = duplicateRandomItem(clone[i]);
+      clone[i] = duplicateRandomItem(clone[i], searchObjectList);
       continue;
     }
   }

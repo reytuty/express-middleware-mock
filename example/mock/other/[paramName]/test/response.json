@@ -1,3 +1,4 @@
 {
-  "it": "works"
+  "it": "works",
+  "params": "{params.paramName}"
 }

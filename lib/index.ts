@@ -18,12 +18,20 @@ const cacheFolders = new Map<
 export default function mockJson(folder: string, customHandler: any = {}) {
   createCacheFolder(folder);
   const mock = (req: Request, res: Response, next: NextFunction) => {
+    if (req.originalUrl === "/sw.js") {
+      // Ignore Service Worker requests
+      return next();
+    }
     const basePath = folder + req.originalUrl.split("?")[0];
     //check if the basePath is a folder
     let pathStringFolder = path.join(...basePath.split("/"));
     if (!fs.existsSync(pathStringFolder)) {
       //check using regex
+      let hasFolder = false;
       cacheFolders.forEach((value, key) => {
+        if (hasFolder) {
+          return;
+        }
         let resultTest = value.regex.test(pathStringFolder);
         if (resultTest) {
           const variables = pathStringFolder.match(value.regex)?.slice(1);
@@ -36,10 +44,13 @@ export default function mockJson(folder: string, customHandler: any = {}) {
           }
           req.params = params;
           pathStringFolder = key;
-          console.log(variables, params);
+          hasFolder = true;
         }
       });
-      console.log("Folder not found", pathStringFolder);
+      if (!hasFolder) {
+        console.log("Folder not found", pathStringFolder);
+        return res.status(404).send("Not found");
+      }
     }
     const unixPathRequest = pathStringFolder + "/request.json";
     const unixPathResponse = pathStringFolder + "/response.json";
