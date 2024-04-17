@@ -8,13 +8,43 @@ export interface ErrorChanceInterface {
   status: number;
   body?: string;
 }
+const cacheFolders = new Map<
+  string,
+  {
+    regex: RegExp;
+    variables: string[];
+  }
+>();
 export default function mockJson(folder: string, customHandler: any = {}) {
+  createCacheFolder(folder);
   const mock = (req: Request, res: Response, next: NextFunction) => {
     const basePath = folder + req.originalUrl.split("?")[0];
-    const unixPathRequest = basePath + "/request.json";
-    const unixPathResponse = basePath + "/response.json";
-    const unixPathErrors = basePath + "/errors.json";
-    checkRedirect(req, res, basePath);
+    //check if the basePath is a folder
+    let pathStringFolder = path.join(...basePath.split("/"));
+    if (!fs.existsSync(pathStringFolder)) {
+      //check using regex
+      cacheFolders.forEach((value, key) => {
+        let resultTest = value.regex.test(pathStringFolder);
+        if (resultTest) {
+          const variables = pathStringFolder.match(value.regex)?.slice(1);
+          let params = {};
+          if (variables) {
+            params = variables.reduce((acc, variable, index) => {
+              (acc as any)[value.variables[index]] = variable;
+              return acc;
+            }, {});
+          }
+          req.params = params;
+          pathStringFolder = key;
+          console.log(variables, params);
+        }
+      });
+      console.log("Folder not found", pathStringFolder);
+    }
+    const unixPathRequest = pathStringFolder + "/request.json";
+    const unixPathResponse = pathStringFolder + "/response.json";
+    const unixPathErrors = pathStringFolder + "/errors.json";
+    checkRedirect(req, res, pathStringFolder);
     let pathString = path.join(...unixPathRequest.split("/"));
     let pathStringErrors = path.join(...unixPathErrors.split("/"));
     if (fs.existsSync(pathStringErrors)) {
@@ -150,4 +180,45 @@ function checkRedirect(req: Request, res: Response, basePath: string) {
       console.log(to);
     }
   }
+}
+function createCacheFolder(folder: string) {
+  //list each subfolder of folder to array string list
+  let folders = getLinearFolders(folder);
+  //filter folders without response.json
+  folders = folders.filter((folder) => {
+    return fs.existsSync(path.join(folder, "response.json"));
+  });
+  //transform each folder to regex replacing [varName] to accept every string that is not [ or ]
+  folders.map((folder) => {
+    //find all variables likes [varName] inside a folderName and save it in array string without [] simble
+    const variables = folder.match(/\[.+\]/g);
+    //remove [] simble from variables
+    const variablesWithoutSimble = variables?.map((variable) => {
+      return variable.replace(/[\[\]]/g, "");
+    });
+    if (variablesWithoutSimble) {
+      cacheFolders.set(folder, {
+        regex: new RegExp(folder.replace(/\[.+\]/g, "([^/]+)")),
+        variables: variablesWithoutSimble || [],
+      });
+    }
+  });
+}
+
+function getLinearFolders(basePath: string): string[] {
+  const subFolders: string[] = [];
+
+  function traverse(directory: string) {
+    const items = fs.readdirSync(directory, { withFileTypes: true });
+    items.forEach((item) => {
+      const fullPath = path.join(directory, item.name);
+      if (item.isDirectory()) {
+        subFolders.push(fullPath);
+        traverse(fullPath);
+      }
+    });
+  }
+
+  traverse(basePath);
+  return subFolders;
 }
