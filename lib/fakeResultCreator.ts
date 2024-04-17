@@ -97,7 +97,9 @@ function duplicateRandomItem(item: any): any {
       //find a pipe
       let choices = fName.split("|");
       if (Array.isArray(choices) && choices.length > 1) {
-        clone[i] = choices[Math.round(Math.random() * choices.length - 1)];
+        const totalChoices = choices.length;
+        let index = Math.max(0, Math.floor(Math.random() * totalChoices - 0.5));
+        clone[i] = choices[index];
         fName = clone[i];
       }
       if (fName) {
