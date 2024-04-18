@@ -1,5 +1,5 @@
 import express = require("express");
-import mockJson from "../lib/index";
+import mockJson from "../index";
 
 const app = express();
 
