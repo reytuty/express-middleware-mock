@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "response": {
+    "id": "uuid"
+  },
+  "messages": [
+    "Atendimento registrado."
+  ]
+}

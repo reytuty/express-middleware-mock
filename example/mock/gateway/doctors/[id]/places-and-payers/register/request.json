@@ -1,0 +1,12 @@
+{
+  "body": {
+    "name": true,
+    "payer": false,
+    "place": false,
+    "address": false,
+    "phone": false,
+    "email": false,
+    "cnpj": false,
+    "any": false
+  }
+}

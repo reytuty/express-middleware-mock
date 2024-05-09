@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "response": {
+    "id": "uuid"
+  },
+  "messages": [
+    "Fonte pagadora e/ou local de atendimento registrado com sucesso."
+  ]
+}

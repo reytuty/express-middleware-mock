@@ -1,0 +1,8 @@
+{
+  "headers": {
+    "Authorization": true
+  },
+  "parameters": {
+    "userId": true
+  }
+}

@@ -41,32 +41,7 @@ export function fakeResultCreator(
     //checking for fake result
     try {
       let data = JSON.parse(fs.readFileSync(pathString) + "");
-      if (data?.list && Array.isArray(data.list) && data.list.length == 1) {
-        //tem apenas 1 item no array, verificar a construção de conteúdo fake baseado nesse primeiro objeto como template
-        //verificando quantidade de itens
-        let skipped = parseInt(req?.query?.skip || data?.skipped || 0);
-        let limited = parseInt(req?.query?.limit || data?.limited || 30);
-        let total = parseInt(data?.total || 40);
-        if (total > 0 && limited > 0 && total > skipped) {
-          //end size
-          let sizeOut = Math.min(total - skipped, limited);
-          let arrResult = [];
-          while (sizeOut-- > 0) {
-            arrResult.push(duplicateRandomItem(data.list[0], searchObjectList));
-          }
-          return res.send({
-            success: true,
-            result: {
-              skipped,
-              limited,
-              total,
-              list: arrResult,
-            },
-            fakeResult: true,
-            messages: ["fake result"],
-          });
-        }
-      }
+
       if (typeof data == "object") {
         data = duplicateRandomItem(data, searchObjectList);
       }
@@ -93,6 +68,33 @@ export function fakeResultCreator(
 //faker.name.fullName()
 function duplicateRandomItem(item: any, searchObjectList: any): any {
   let clone = { ...item };
+  if (clone?.list && Array.isArray(clone.list) && clone.list.length == 1) {
+    // if (clone?.list && Array.isArray(clone.list) && clone.list.length == 1) {
+    //tem apenas 1 item no array, verificar a construção de conteúdo fake baseado nesse primeiro objeto como template
+    //verificando quantidade de itens
+    let skipped = parseInt(
+      searchObjectList?.query?.skip || clone?.skipped || 0
+    );
+    let limited = parseInt(
+      searchObjectList?.query?.limit || clone?.limited || 30
+    );
+    let total = parseInt(clone?.total || 40);
+    if (total > 0 && limited > 0 && total > skipped) {
+      //end size
+      let sizeOut = Math.min(total - skipped, limited);
+      let arrResult = [];
+      while (sizeOut-- > 0) {
+        arrResult.push(duplicateRandomItem(clone.list[0], searchObjectList));
+      }
+      clone = {
+        skipped,
+        limited,
+        total,
+        list: arrResult,
+      };
+      return clone;
+    }
+  }
   //switch values
   for (let i in clone) {
     if (clone[i] === null) {

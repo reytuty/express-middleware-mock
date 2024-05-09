@@ -1,0 +1,12 @@
+{
+  "body": {
+    "file": true
+  },
+  "query": {
+    "procedure": true,
+    "appointment?": true
+  },
+  "parameter": {
+    "doctorId": true
+  }
+}

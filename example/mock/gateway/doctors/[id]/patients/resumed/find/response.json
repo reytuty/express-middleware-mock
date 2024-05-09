@@ -1,0 +1,12 @@
+{
+  "total": 405,
+  "skiped": 0,
+  "limited": 10,
+  "list": [
+    {
+      "id": "uuid",
+      "name": "name.fullName",
+      "any": ""
+    }
+  ]
+}

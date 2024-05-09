@@ -1,0 +1,7 @@
+{
+  "query": {
+    "skip": false,
+    "limit": false,
+    "q": false
+  }
+}

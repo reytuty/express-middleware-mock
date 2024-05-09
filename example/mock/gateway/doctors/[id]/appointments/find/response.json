@@ -1,0 +1,65 @@
+{
+  "success": true,
+  "result": {
+    "total": 405,
+    "skiped": 0,
+    "limited": 10,
+    "list": [
+      {
+        "id": "uuid",
+        "stepStatus": "scrap|valid|toFature|resolved",
+        "related": {
+          "place": {
+            "id": "uuid",
+            "name": "user.fullName"
+          },
+          "payer": {
+            "id": "uuid",
+            "name": "lalala"
+          },
+          "patient": {
+            "id": "uuid",
+            "name": "fullName",
+            "cpf": "br.cpf"
+          }
+        },
+        "paymentInfo": {
+          "method": "healthInsurance|private",
+          "info": {
+            "healthInsurance": {
+              "cardNumber": "123342"
+            }
+          }
+        },
+        "serviceInfo": {
+          "guideCode": "43434|34534543|56455434||",
+          "date": "2020-01-01 14:21",
+          "totalValue": 0
+        },
+        "procedures": [
+          {
+            "id": "uuid",
+            "name": "Procedimento 1",
+            "cbhpmCode": "1.01.01.020 - Em domicílio",
+            "value": 202.37
+          },
+          {
+            "id": "uuid",
+            "name": "Procedimento 2",
+            "cbhpmCode": "1.01.01.020 - Em domicílio",
+            "value": 202.37
+          }
+        ],
+        "attachments": [
+          {
+            "id": "",
+            "fileName": "",
+            "bucket": "",
+            "extension": ""
+          }
+        ]
+      }
+    ]
+  },
+  "messages": []
+}

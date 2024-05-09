@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "response": {
+    "skiped": 0,
+    "limited": 0,
+    "total": 1,
+    "list": [
+      {
+        "id": "uuid",
+        "cbhpmCode": "1.01.01.020",
+        "name": "Em domicílio",
+        "value": null
+      }
+    ]
+  }
+}

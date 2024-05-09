@@ -1,0 +1,57 @@
+{
+  "body": {
+    "id": false,
+    "status": "draft|approved|toPay|deliveried|rejected|accepted|done",
+    "related": {
+      "place": {
+        "id": "uuid",
+        "name": "user.fullName"
+      },
+      "payer": {
+        "id": "uuid",
+        "name": "lalala"
+      },
+      "patient": {
+        "id": "uuid",
+        "name": "lalala",
+        "cpf": "xpto",
+        "_comment": "esse campo é opcional"
+      }
+    },
+    "paymentInfo": {
+      "method": "healthInsurance|private",
+      "info": {
+        "healthInsurance": {
+          "cardNumber": "123342"
+        }
+      }
+    },
+    "serviceInfo": {
+      "guideCode": false,
+      "date": "2020-01-01 14:21",
+      "totalValue": 0
+    },
+    "procedures": [
+      {
+        "id": "uuid",
+        "name": "Procedimento 1",
+        "cbhpmCode": "1.01.01.020 - Em domicílio",
+        "value": 202.37
+      },
+      {
+        "id": "uuid",
+        "name": "Procedimento 2",
+        "cbhpmCode": "1.01.01.020 - Em domicílio",
+        "value": 202.37
+      }
+    ],
+    "attachments": [
+      {
+        "id": "",
+        "fileName": "",
+        "bucket": "",
+        "extension": ""
+      }
+    ]
+  }
+}

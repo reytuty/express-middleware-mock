@@ -1,0 +1,16 @@
+{
+  "target": {
+    "doctorId": "x",
+    "year": "2023",
+    "month": "2"
+  },
+  "type": "total-month-amount",
+  "updatedAt": "",
+  "changedAt": "",
+  "data": {
+    "totalProduced": 8500,
+    "toRecive": 5500,
+    "recived": 2500,
+    "losts": 500
+  }
+}

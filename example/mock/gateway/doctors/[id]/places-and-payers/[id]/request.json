@@ -1,0 +1,14 @@
+{
+  "method": "put",
+  "body": {
+    "data": {
+      "isPayer": false,
+      "isPlace": false,
+      "name": false,
+      "cnpj": false,
+      "email": false,
+      "phone": false,
+      "address": false
+    }
+  }
+}

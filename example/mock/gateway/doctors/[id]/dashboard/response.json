@@ -1,0 +1,210 @@
+{
+  "success": true,
+  "result": {
+    "accumulated": {
+      "resume": {
+        "startDate": "2023-10-02",
+        "totalProduced": 8500,
+        "toRecive": 5500,
+        "recived": 2500,
+        "losts": 500
+      },
+      "toReceive": {
+        "info": {
+          "type": "video|image|text|youtube",
+          "value": "string with a content here"
+        },
+        "total": 5500.50,
+        "data": [
+          {
+            "id": "x1",
+            "name": "Clínica Visionária",
+            "total": 500
+          },
+          {
+            "id": "x5",
+            "name": "Sulamérica - Faria Lima",
+            "total": 500
+          }
+        ]
+      },
+      "received": {
+        "info": {
+          "type": "video|image|text|youtube",
+          "value": "string with a content here"
+        },
+        "total": 2500,
+        "data": [
+          {
+            "id": "x1",
+            "name": "Clínica Visionária",
+            "total": 1500
+          },
+          {
+            "id": "x2",
+            "name": "Hospital São Vicente",
+            "total": 500
+          },
+          {
+            "id": "x3",
+            "name": "UPA Thelmo Azevedo Marques",
+            "total": 500
+          }
+        ]
+      },
+      "losted": {
+        "info": {
+          "type": "video|image|text|youtube",
+          "value": "string with a content here"
+        },
+        "total": 500,
+        "data": [
+          {
+            "id": "x1",
+            "name": "Clínica Visionária",
+            "total": 500
+          }
+        ]
+      }
+    },
+    "past": [
+      {
+        "resume": {
+          "startDate": "2023-12-01",
+          "endDate": "2023-12-31",
+          "totalProduced": 8500,
+          "toRecive": 5500,
+          "recived": 2500,
+          "losts": 500
+        },
+        "toReceive": {
+          "info": {
+            "type": "video|image|text|youtube",
+            "value": "string with a content here"
+          },
+          "total": 5500.50,
+          "data": [
+            {
+              "id": "x1",
+              "name": "Clínica Visionária",
+              "total": 500
+            },
+            {
+              "id": "x5",
+              "name": "Sulamérica - Faria Lima",
+              "total": 500
+            }
+          ]
+        },
+        "received": {
+          "info": {
+            "type": "video|image|text|youtube",
+            "value": "string with a content here"
+          },
+          "total": 2500,
+          "data": [
+            {
+              "id": "x1",
+              "name": "Clínica Visionária",
+              "total": 1500
+            },
+            {
+              "id": "x2",
+              "name": "Hospital São Vicente",
+              "total": 500
+            },
+            {
+              "id": "x3",
+              "name": "UPA Thelmo Azevedo Marques",
+              "total": 500
+            }
+          ]
+        },
+        "losted": {
+          "info": {
+            "type": "video|image|text|youtube",
+            "value": "string with a content here"
+          },
+          "total": 500,
+          "data": [
+            {
+              "id": "x1",
+              "name": "Clínica Visionária",
+              "total": 500
+            }
+          ]
+        }
+      }
+    ],
+    "future": [
+      {
+        "resume": {
+          "startDate": "2024-02-01",
+          "endDate": "2024-02-31",
+          "totalProduced": 8500,
+          "toRecive": 5500,
+          "recived": 2500,
+          "losts": 500
+        },
+        "toReceive": {
+          "info": {
+            "type": "video|image|text|youtube",
+            "value": "string with a content here"
+          },
+          "total": 5500.50,
+          "data": [
+            {
+              "id": "x1",
+              "name": "Clínica Visionária",
+              "total": 500
+            },
+            {
+              "id": "x5",
+              "name": "Sulamérica - Faria Lima",
+              "total": 500
+            }
+          ]
+        },
+        "received": {
+          "info": {
+            "type": "video|image|text|youtube",
+            "value": "string with a content here"
+          },
+          "total": 2500,
+          "data": [
+            {
+              "id": "x1",
+              "name": "Clínica Visionária",
+              "total": 1500
+            },
+            {
+              "id": "x2",
+              "name": "Hospital São Vicente",
+              "total": 500
+            },
+            {
+              "id": "x3",
+              "name": "UPA Thelmo Azevedo Marques",
+              "total": 500
+            }
+          ]
+        },
+        "losted": {
+          "info": {
+            "type": "video|image|text|youtube",
+            "value": "string with a content here"
+          },
+          "total": 500,
+          "data": [
+            {
+              "id": "x1",
+              "name": "Clínica Visionária",
+              "total": 500
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "messages": []
+}

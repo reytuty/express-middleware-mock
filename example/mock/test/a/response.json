@@ -1,10 +1,13 @@
 {
-  "skip": 0,
-  "limit": 20,
-  "total": 43,
-  "list": [
-    {
-      "message": "name.fullName is not a function"
-    }
-  ]
+  "success": true,
+  "lalala": {
+    "skip": 0,
+    "limit": 20,
+    "total": 43,
+    "list": [
+      {
+        "message": "name.fullName"
+      }
+    ]
+  }
 }

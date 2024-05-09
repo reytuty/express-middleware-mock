@@ -1,0 +1,13 @@
+{
+  "body": {
+    "name": true,
+    "cpf": false,
+    "gender": false,
+    "birthday": false,
+    "helf_info": false,
+    "phone": false,
+    "email": false,
+    "address": false,
+    "any": "any"
+  }
+}
