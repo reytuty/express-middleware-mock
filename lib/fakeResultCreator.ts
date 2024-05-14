@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "node:fs";
 import { Faker, faker } from "@faker-js/faker";
 import { v4 as uuid } from "uuid";
-faker.name.fullName;
+
 let creators = {
   ...faker,
   hour: () => {
@@ -21,6 +21,37 @@ let creators = {
   },
   boolean: () => {
     return Math.round(Math.random() * 1000) % 2 == 0;
+  },
+  cpf: () => {
+    const mod = (dividendo: number, divisor: number) =>
+      Math.round(dividendo - Math.floor(dividendo / divisor) * divisor);
+    const randNums = String(Math.random()).slice(2, 11);
+    let d1 =
+      11 -
+      mod(
+        randNums
+          .split("")
+          .reverse()
+          .reduce((acc, cur, idx) => acc + parseInt(cur) * (idx + 2), 0),
+        11
+      );
+    if (d1 >= 10) d1 = 0;
+
+    let d2 =
+      11 -
+      mod(
+        d1 * 2 +
+          randNums
+            .split("")
+            .reverse()
+            .reduce((acc, cur, idx) => acc + parseInt(cur) * (idx + 3), 0),
+        11
+      );
+    if (d2 >= 10) d2 = 0;
+
+    const cpfGenerated = `${randNums}${d1}${d2}`;
+
+    return cpfGenerated;
   },
 };
 export function fakeResultCreator(
