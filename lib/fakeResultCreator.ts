@@ -65,6 +65,7 @@ export function fakeResultCreator(
     query: req.query,
     body: req.body,
     headers: req.headers,
+    env: process.env,
   };
   creators = { ...creators, ...customHandler };
   let pathString = path.join(...unixPath.split("/"));
