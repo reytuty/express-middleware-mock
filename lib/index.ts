@@ -208,8 +208,10 @@ function createCacheFolder(folder: string) {
       return variable.replace(/[\[\]]/g, "");
     });
     if (variablesWithoutSimble) {
+      //cross plataform replace for directories windows , linux and mac
+      const regexPath = folder.replace(/[\[\]]/g, "").split(path.sep).join("\\\\");
       cacheFolders.set(folder, {
-        regex: new RegExp(folder.replace(/\[.+\]/g, "([^/]+)")),
+        regex: new RegExp(regexPath.replace(/\[.+\]/g, "([^/]+)")),
         variables: variablesWithoutSimble || [],
       });
     }
