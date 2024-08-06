@@ -24,7 +24,10 @@ export default function mockJson(folder: string, customHandler: any = {}) {
     }
     const basePath = folder + req.originalUrl.split("?")[0];
     //check if the basePath is a folder
-    let pathStringFolder = path.join(...basePath.split("/"));
+    let pathStringFolder = normalizePathString(
+      path.join(...basePath.split("/"))
+    );
+
     if (!fs.existsSync(pathStringFolder)) {
       //check using regex
       let hasFolder = false;
@@ -192,9 +195,16 @@ function checkRedirect(req: Request, res: Response, basePath: string) {
     }
   }
 }
+function normalizePaths(paths: string[]): string[] {
+  return paths.map((path) => path.replace(/\\/g, "/"));
+}
+function normalizePathString(path: string): string {
+  return path.replace(/\\/g, "/");
+}
+
 function createCacheFolder(folder: string) {
   //list each subfolder of folder to array string list
-  let folders = getLinearFolders(folder);
+  let folders = normalizePaths(getLinearFolders(folder));
   //filter folders without response.json
   folders = folders.filter((folder) => {
     return fs.existsSync(path.join(folder, "response.json"));
@@ -207,11 +217,11 @@ function createCacheFolder(folder: string) {
     const variablesWithoutSimble = variables?.map((variable) => {
       return variable.replace(/[\[\]]/g, "");
     });
+    //put OS folder string on variable
+
     if (variablesWithoutSimble) {
-      //cross plataform replace for directories windows , linux and mac
-      const regexPath = folder.replace(/[\[\]]/g, "").split(path.sep).join("\\\\");
       cacheFolders.set(folder, {
-        regex: new RegExp(regexPath.replace(/\[.+\]/g, "([^/]+)")),
+        regex: new RegExp(folder.replace(/\[.+\]/g, `([^/\]+)`)),
         variables: variablesWithoutSimble || [],
       });
     }
