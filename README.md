@@ -54,8 +54,9 @@ Request file simbolise what do you need to receive as query params, body or para
   "params": {
     "someValueFromQueryParams": true
   },
-  "header":{
-    "someHeadersParamsHere": true
+  "headers":{
+    "someHeadersParamsHere": true,
+    "bearer": true
   },
   "body":{
     "myPostParamHere": true
@@ -66,9 +67,10 @@ Request file simbolise what do you need to receive as query params, body or para
 }
 ```
 
-- body: for params inside a body request (not work for GET methods)
-- query: for params on url, after ? simble, like `?skip=0`
-- params: it is not possible to check url params yet
+- `body`: for params inside a body request (not work for GET methods)
+- `query`: for params on url, after ? simble, like `?skip=0`
+- `params`: it is not possible to check url params yet
+- `headers`: Set required variables from headers
 
 Examples:
 
@@ -91,6 +93,14 @@ To recieve skip and limit on get method as url params, but not optionaly, and ca
         "skip": false,
         "limit": false,
         "category": true
+    }
+}
+```
+
+```
+{
+    "headers": {
+        "bearer": true
     }
 }
 ```

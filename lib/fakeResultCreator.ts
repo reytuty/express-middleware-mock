@@ -99,6 +99,9 @@ export function fakeResultCreator(
 }
 //faker.name.fullName()
 function duplicateRandomItem(item: any, searchObjectList: any): any {
+  if (Array.isArray(item)) {
+    return item;
+  }
   let clone = { ...item };
   if (clone?.list && Array.isArray(clone.list) && clone.list.length == 1) {
     // if (clone?.list && Array.isArray(clone.list) && clone.list.length == 1) {

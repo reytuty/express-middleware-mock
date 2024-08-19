@@ -93,9 +93,12 @@ const specialValidators: { [key: string]: Function } = {
       const hasFile = data["content-type"]?.startsWith("multipart/form-data");
       return hasFile == true;
     }
-    if (propName == "token") {
+    if (propName == "bearer") {
       const hasToken = data["authorization"]?.startsWith("Bearer");
       return hasToken == true;
+    }
+    if (data[propName] === undefined) {
+      return false;
     }
     return true;
   },
@@ -212,7 +215,7 @@ function createCacheFolder(folder: string) {
   //transform each folder to regex replacing [varName] to accept every string that is not [ or ]
   folders.map((folder) => {
     //find all variables likes [varName] inside a folderName and save it in array string without [] simble
-    const variables = folder.match(/\[.+\]/g);
+    const variables = folder.match(/\[.+?\]/g);
     //remove [] simble from variables
     const variablesWithoutSimble = variables?.map((variable) => {
       return variable.replace(/[\[\]]/g, "");
@@ -221,7 +224,7 @@ function createCacheFolder(folder: string) {
 
     if (variablesWithoutSimble) {
       cacheFolders.set(folder, {
-        regex: new RegExp(folder.replace(/\[.+\]/g, `([^/\]+)`)),
+        regex: new RegExp(folder.replace(/\[.+?\]/g, `([^/\]+)`)),
         variables: variablesWithoutSimble || [],
       });
     }

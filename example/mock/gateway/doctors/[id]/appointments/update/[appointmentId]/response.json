@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "data": {
+    "appointmentId": "{params.appointmentId}",
+    "id": "{params.id}"
+  },
+  "messages": [
+    "it works"
+  ]
+}
