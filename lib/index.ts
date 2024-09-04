@@ -160,8 +160,8 @@ function validateRequest(
     for (let varName in content[propName]) {
       try {
         if (content[propName][varName]) {
-          //se é necessário, valida
           if (!specialValidators[propName](requestProp, varName)) {
+            //was setted, now check the type. If true, just check if was setted
             result.success = false;
             result.result[propName][
               varName
@@ -170,11 +170,33 @@ function validateRequest(
           }
         }
       } catch (e: any) {
-        if (content[propName][varName] && !requestProp[varName]) {
-          result.success = false;
-          result.result[propName][varName] = `expected ${propName}.${varName}`;
-          result.messages.push(`expected ${propName}.${varName}`);
+        const configuredPropType: string = content[propName][varName];
+        if (configuredPropType === "boolean") {
+          if (content[propName][varName] && !requestProp[varName]) {
+            result.success = false;
+            result.result[propName][
+              varName
+            ] = `expected ${propName}.${varName}`;
+            result.messages.push(`expected ${propName}.${varName}`);
+          }
+          continue;
         }
+        let sentVarProp: string = typeof requestProp[varName];
+        if (sentVarProp === "object") {
+          if (Array.isArray(requestProp[varName])) {
+            sentVarProp = "array";
+          }
+        }
+        if (configuredPropType === sentVarProp) {
+          continue;
+        }
+        result.success = false;
+        result.result[propName][
+          varName
+        ] = `expected ${propName}.${varName} was type ${configuredPropType}, received ${sentVarProp}`;
+        result.messages.push(
+          `expected ${propName}.${varName} was type ${configuredPropType}, received ${sentVarProp}`
+        );
       }
     }
   }

@@ -1,5 +1,5 @@
 {
-  "headers": {
-    "a": true
+  "query": {
+    "a": "array"
   }
 }
