@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import * as path from "path";
 import * as fs from "node:fs";
 import { fakeResultCreator } from "./fakeResultCreator";
-import { error } from "console";
+
 export interface ErrorChanceInterface {
   percentChance: number;
   status: number;
@@ -15,12 +15,16 @@ const cacheFolders = new Map<
     variables: string[];
   }
 >();
-export default function mockJson(folder: string, customHandler: any = {}) {
+export default function mockJson(
+  folder: string,
+  customHandler: any = {}
+): RequestHandler {
   createCacheFolder(folder);
   const mock = (req: Request, res: Response, next: NextFunction) => {
     if (req.originalUrl === "/sw.js") {
       // Ignore Service Worker requests
-      return next();
+      next();
+      return;
     }
     const basePath = folder + req.originalUrl.split("?")[0];
     //check if the basePath is a folder
@@ -52,7 +56,8 @@ export default function mockJson(folder: string, customHandler: any = {}) {
       });
       if (!hasFolder) {
         console.log("Folder not found", pathStringFolder);
-        return res.status(404).send("Not found");
+        res.status(404).send("Not found");
+        return;
       }
     }
     const unixPathRequest = pathStringFolder + "/request.json";
